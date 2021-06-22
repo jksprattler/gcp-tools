@@ -1,0 +1,123 @@
+# This is a base config template that deploys the following network infrastructure:
+#
+# VPC Network, 2x Subnets, 2x Cloud Routers, 2x Partner Interconnects for redundancy
+#
+# Replace the following placeholders with appropriate values:
+#  <FIXME:vpcname>: The name of the VPC
+#  <FIXME:subnetname>: The name of the subnet
+#  <FIXME:subnetcidr>: The CIDR range of the subnet
+#  <FIXME:region>: The region for the subnets, cloud routers and interconnects
+#  <FIXME:crname>: The name of the cloud router
+#  <FIXME:description>: Provide brief description or leave blank
+#  <FIXME:range>: Enter custom advertisedIpRanges to be advertised by the CR
+#  <FIXME:vpntunnelname>: The name of your local VPN Tunnel
+#  <FIXME:projectid>: The name of an external GCP project where relative path can be used
+#  <FIXME:vpngwname>: The name of the VPN Gateway - deteremine if local or peer
+#  <FIXME:sharedSecret>: The shared secret for the VPN Tunnel
+#
+# Corresponding jinja templates are required for deployment in imports
+#
+# For details refer to the API docs:
+# https://cloud.google.com/compute/docs/reference/rest/v1/networks
+# https://cloud.google.com/compute/docs/reference/rest/v1/subnetworks
+# https://cloud.google.com/compute/docs/reference/rest/v1/routers
+# https://cloud.google.com/compute/docs/reference/rest/v1/vpnGateways
+# https://cloud.google.com/compute/docs/reference/rest/v1/vpnTunnels
+
+imports:
+  - path: network.jinja
+  - path: subnetwork.jinja
+  - path: cloud_router.jinja
+  - path: vpn-gateway.jinja
+#  - path: vpn-tunnel.jinja    
+
+resources:
+# Deploy the VPC Network
+  - name: <FIXME:vpcname>
+    type: network.jinja
+# Deploy the VPC Peerings
+  - name: peer-to-<FIXME:projectid>   
+    type: network-addPeering.jinja    
+    properties:
+      project: <FIXME:projectid>   
+      network: <FIXME:vpcname>
+      exchangeSubnetRoutes: true 
+      networkPeering:
+        name: peer-to-<FIXME:projectid>
+        network: https://www.googleapis.com/compute/v1/projects/<FIXME:projectid>/global/networks/<FIXME:vpcname>
+        exportCustomRoutes: true
+        importCustomRoutes: true
+        exchangeSubnetRoutes: true        
+        exportSubnetRoutesWithPublicIp: false
+        importSubnetRoutesWithPublicIp: false
+# Deploy the subnets in the VPC network
+  - name: <FIXME:subnetname>
+    type: subnetwork.jinja
+    properties:
+      ipCidrRange: <FIXME:subnetcidr>
+      network: $(ref.<FIXME:vpcname>.selfLink)
+      region: <FIXME:region>
+  - name: <FIXME:subnetname>
+    type: subnetwork.jinja
+    properties:
+      ipCidrRange: <FIXME:subnetcidr>
+      network: $(ref.<FIXME:vpcname>.selfLink)
+      region: <FIXME:region>
+# Deploy the Cloud Routers
+  - name: <FIXME:crname>
+    type: cloud_router.jinja
+    properties:
+      network: $(ref.<FIXME:vpcname>.selfLink)
+      region: <FIXME:region>
+      bgp:
+        asn: 16550
+        advertiseMode: CUSTOM
+        advertisedGroups: 
+        - ALL_SUBNETS
+### NOTE: GCP TAC Case # "update" feature to append additional custom BGP IP ranges after CR is not currently available - feature request has been raised
+### During interim we will append additional ranges via GUI or API PATCH call - tbd
+        advertisedIpRanges:
+          - description: <FIXME:description>
+            range: <FIXME:range>
+          - description: <FIXME:description>
+            range: <FIXME:range>
+  - name: <FIXME:crname>
+    type: cloud_router.jinja
+    properties:
+      network: $(ref.<FIXME:vpcname>.selfLink)
+      region: <FIXME:region>
+      bgp:
+        asn: 16550
+        advertiseMode: CUSTOM
+        advertisedGroups: 
+        - ALL_SUBNETS        
+        advertisedIpRanges:
+          - description: <FIXME:description>
+            range: <FIXME:range>
+          - description: <FIXME:description>
+            range: <FIXME:range>
+# Deploy the VPN gateways
+  - name: <FIXME:vpngwname>
+    type: vpn-gateway.jinja
+    properties:
+      region: <FIXME:region>
+      network: $(ref.<FIXME:vpcname>.selfLink) 
+# Deploy the HA VPN Tunnels
+  - name: <FIXME:vpntunnelname>
+    type: vpn-tunnel.jinja
+    properties:
+      region: <FIXME:region>
+      peerGcpGateway: projects/<FIXME:projectid>/regions/<FIXME:region>/vpnGateways/<FIXME:vpngwname> 
+      router: $(ref.<FIXME:crname>.selfLink)
+      sharedSecret: <FIXME:sharedSecret>
+      vpnGateway: $(ref.<FIXME:vpngwname>.selfLink)
+      vpnGatewayInterface: 0 
+  - name: <FIXME:vpntunnelname>
+    type: vpn-tunnel.jinja
+    properties:
+      region: <FIXME:region>
+      peerGcpGateway: projects/<FIXME:projectid>/regions/<FIXME:region>/vpnGateways/<FIXME:vpngwname> 
+      router: $(ref.<FIXME:crname>.selfLink)
+      sharedSecret: <FIXME:sharedSecret>
+      vpnGateway: $(ref.<FIXME:vpngwname>.selfLink)
+      vpnGatewayInterface: 1                     

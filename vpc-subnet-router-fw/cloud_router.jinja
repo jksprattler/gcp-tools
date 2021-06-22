@@ -1,0 +1,11 @@
+resources:
+- name: {{ env["name"] }}
+  type: compute.v1.router
+  properties:
+    network: {{ properties["network"] }}
+    region: {{ properties["region"] }}
+    bgp:
+      asn: {{ properties.bgp["asn"] }}
+      advertiseMode: {{ properties.bgp["advertiseMode"] }}
+      advertisedGroups: {{ properties.bgp["advertisedGroups"] }}
+      advertisedIpRanges: {{ properties.bgp["advertisedIpRanges"] }}

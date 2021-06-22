@@ -1,0 +1,8 @@
+resources:
+- name: {{ env["name"] }}
+  type: compute.v1.router
+  properties:
+    network: {{ properties["network"] }}
+    region: {{ properties["region"] }}
+    bgp:
+      asn: {{ properties.bgp["asn"] }}

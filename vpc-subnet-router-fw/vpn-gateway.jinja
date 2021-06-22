@@ -1,0 +1,6 @@
+resources:
+- name: {{ env["name"] }}
+  type: compute.v1.vpnGateways
+  properties:
+    network: {{ properties["network"] }}
+    region: {{ properties["region"] }}  
