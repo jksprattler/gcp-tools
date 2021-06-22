@@ -1,0 +1,8 @@
+resources:
+- name: {{ env["name"] }}
+  type: compute.v1.subnetwork
+  properties:
+    ipCidrRange: {{ properties["ipCidrRange"] }}
+    network: {{ properties["network"] }}
+    region: {{ properties["region"] }}
+    enableFlowLogs: true

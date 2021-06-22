@@ -1,0 +1,6 @@
+resources:
+- name: {{ env["name"] }}
+  type: gcp-types/compute-v1:compute.networks.removePeering
+  properties:
+    name: {{ properties["name"] }}
+    network: {{ properties["network"] }}

@@ -1,0 +1,42 @@
+# This is a base config template that deploys 2x Partner Interconnect Attachments
+#
+# Pre-requisites:
+# The VPC Network, Subnets and Cloud Routers must already be deployed
+# Ref the "vpc-subnets-routers-fwrules" directory for current configs
+# Corresponding jinja templates are required for deployment in imports section
+#
+# Replace the following placeholders with appropriate values:
+#  <FIXME:region>: The region for the subnets, cloud routers and interconnects
+#  <FIXME:crname>: The name of the cloud router
+#  <FIXME:icname>: The name of the interconnect 
+#  <FIXME:edgeAvailabilityDomain>: The "AVAILABILITY_DOMAIN_x" which should be set to 1 or 2
+#  <FIXME:description>: Provide brief description or leave blank
+#
+# For details refer to the API docs:
+# https://cloud.google.com/compute/docs/reference/rest/v1/interconnectAttachments 
+
+imports:
+  - path: interconnect.jinja
+
+resources:
+# Deploy the Partner Interconnect Attachments, no update API available any updates must be done using API PATCH call (ie postman) or in WebUI
+  - name: <FIXME:icname>
+    type: interconnect.jinja
+    properties:
+      router: https://www.googleapis.com/compute/v1/projects/<FIXME:projectid>/regions/<FIXME:region>/routers/<FIXME:crname>
+      adminEnabled: true
+      region: <FIXME:region>
+      edgeAvailabilityDomain: <FIXME:edgeAvailabilityDomain>
+      type: PARTNER
+      description: <FIXME:description>
+      mtu: 1500
+  - name: <FIXME:icname>
+    type: interconnect.jinja
+    properties:
+      router: https://www.googleapis.com/compute/v1/projects/<FIXME:projectid>/regions/<FIXME:region>/routers/<FIXME:crname>
+      adminEnabled: true
+      region: <FIXME:region>
+      edgeAvailabilityDomain: <FIXME:edgeAvailabilityDomain>
+      type: PARTNER
+      description: <FIXME:description>
+      mtu: 1500

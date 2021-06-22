@@ -1,0 +1,13 @@
+resources:
+- name: {{ env["name"] }}
+  type: compute.v1.vpnTunnel
+  properties:
+    region: {{ properties["region"] }}
+    peerGcpGateway: {{ properties["peerGcpGateway"] }}
+    ikeVersion: 2
+    sharedSecret: {{ properties["sharedSecret"] }}
+#    peerIp: {{ properties["peerIp"] }}
+    router: {{ properties["router"] }}
+    vpnGateway: {{ properties["vpnGateway"] }}
+    vpnGatewayInterface: {{ properties["vpnGatewayInterface"] }}
+#    network: {{ properties["network"] }}

@@ -1,0 +1,10 @@
+resources:
+- name: {{ env["name"] }}
+  type: gcp-types/compute-v1:compute.networks.addPeering
+  properties:
+    project: {{ properties["project"] }}
+    network: {{ properties["network"] }}
+    networkPeering: {{ properties["networkPeering"] }}
+  metadata:
+    dependsOn:
+    - {{ properties["network"] }}

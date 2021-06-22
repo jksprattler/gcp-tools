@@ -1,0 +1,11 @@
+resources:
+- name: {{ env["name"] }}
+  type: compute.v1.interconnectAttachments
+  properties:
+    router: {{ properties["router"] }}
+    adminEnabled: {{ properties["adminEnabled"] }}
+    region: {{ properties["region"] }}
+    edgeAvailabilityDomain: {{ properties["edgeAvailabilityDomain"] }}
+    type: {{ properties["type"] }}
+    description: {{ properties["description"] }}
+    mtu: {{ properties["mtu"] }}
