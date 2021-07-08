@@ -1,3 +1,5 @@
+#!/bin/bash
+
 gcloud compute networks subnets list --format="value(name,region)" |
 while read name region
 do 
