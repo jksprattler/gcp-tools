@@ -1,0 +1,1 @@
+this is just a placeholder to be used in conjunction with the `gcp_delete_empty_buckets.sh` script to save an empty bucket from deletion
